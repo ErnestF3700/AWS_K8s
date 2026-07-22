@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Flask Demo</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <link rel="icon" href="/static/favicon.ico" />
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>Flask + Docker + Kubernetes</h1>
+
+      <p>Application is running successfully.</p>
+
+      <table>
+        <tr>
+          <td>Hostname</td>
+          <td>{{ hostname }}</td>
+        </tr>
+
+        <tr>
+          <td>Version</td>
+          <td>{{ version }}</td>
+        </tr>
+
+        <tr>
+          <td>Environment</td>
+          <td>{{ environment }}</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>
