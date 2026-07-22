@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket         = "infra-tfstate"
+    bucket         = "ernestf3700-infra-tfstate"
     key            = "kubernetes/terraform.tfstate"
     region         = "eu-central-1"
     dynamodb_table = "terraform-lock"
