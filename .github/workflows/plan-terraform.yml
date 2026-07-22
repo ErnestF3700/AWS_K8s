@@ -1,0 +1,15 @@
+name: Terraform Plan
+
+on:
+  pull_request:
+    paths:
+      - 'AWS/**'
+
+jobs:
+  terraform:
+
+    uses: ./.github/workflows/terraform-plan-template.yml
+
+    with:
+      working_directory: AWS
+      aws_region: eu-central-1

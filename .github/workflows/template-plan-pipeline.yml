@@ -1,0 +1,58 @@
+name: Reusable Terraform Plan
+
+on:
+  workflow_call:
+    inputs:
+      working_directory:
+        required: true
+        type: string
+
+      aws_region:
+        required: true
+        type: string
+
+env:
+  AWS_REGION: ${{ inputs.aws_region }}
+
+jobs:
+  terraform-plan:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+
+    defaults:
+      run:
+        working-directory: ${{ inputs.working_directory }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::494443576021:role/OIDC
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Terraform Plan
+        uses: ./.github/actions/terraform
+        with:
+          working_directory: ${{ inputs.working_directory }}
+          command: plan
+
+      - name: Generate Plan
+        run: terraform show -no-color tfplan > plan.txt
+
+      - name: Upload Plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: ${{ inputs.working_directory }}/tfplan
+
+      - name: Comment PR
+        if: github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          recreate: true
+          path: plan.txt

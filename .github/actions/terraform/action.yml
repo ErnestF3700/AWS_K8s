@@ -1,0 +1,46 @@
+name: Terraform
+description: Reusable Terraform Action
+
+inputs:
+  working_directory:
+    description: Terraform working directory
+    required: true
+
+  command:
+    description: Terraform command (plan/apply)
+    required: true
+
+runs:
+  using: composite
+
+  steps:
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+
+    - name: Terraform Init
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      run: terraform init
+
+    - name: Terraform Format Check
+      if: inputs.command == 'plan'
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      run: terraform fmt -check
+
+    - name: Terraform Validate
+      if: inputs.command == 'plan'
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      run: terraform validate
+
+    - name: Terraform Plan
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      run: terraform plan -out=tfplan
+
+    - name: Terraform Apply
+      if: inputs.command == 'apply'
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      run: terraform apply -auto-approve tfplan

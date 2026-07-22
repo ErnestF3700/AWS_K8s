@@ -1,0 +1,16 @@
+name: Terraform Apply
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  terraform:
+
+    uses: ./.github/workflows/terraform-apply-template.yml
+
+    with:
+      working_directory: AWS
+      aws_region: eu-central-1
+      environment: dev

@@ -1,0 +1,48 @@
+name: Reusable Terraform Apply
+
+on:
+  workflow_call:
+    inputs:
+      working_directory:
+        required: true
+        type: string
+
+      aws_region:
+        required: true
+        type: string
+
+      environment:
+        required: true
+        type: string
+
+env:
+  AWS_REGION: ${{ inputs.aws_region }}
+
+jobs:
+  terraform-apply:
+    runs-on: ubuntu-latest
+
+    environment:
+      name: ${{ inputs.environment }}
+
+    permissions:
+      id-token: write
+      contents: read
+
+    defaults:
+      run:
+        working-directory: ${{ inputs.working_directory }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::494443576021:role/OIDC
+          aws-region: ${{ env.AWS_REGION }}
+          
+      - name: Terraform Apply
+        uses: ./.github/actions/terraform
+        with:
+          working_directory: ${{ inputs.working_directory }}
+          command: apply
