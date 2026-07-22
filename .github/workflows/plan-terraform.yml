@@ -9,7 +9,7 @@ on:
 
 jobs:
   terraform:
-    uses: ./.github/workflows/terraform-plan-template.yml
+    uses: ./.github/workflows/template-plan-pipeline.yml
     with:
       working_directory: AWS
       aws_region: eu-central-1
