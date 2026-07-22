@@ -32,7 +32,7 @@ jobs:
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::494443576021:role/OIDC
+          role-to-assume: arn:aws:iam::235494780941:role/plan_tf_role
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Terraform Plan
