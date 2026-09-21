@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-app
+  namespace: dev
+  labels:
+    app: flask-app
+
+spec:
+  replicas: 2
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+
+  selector:
+    matchLabels:
+      app: flask-app
+
+  template:
+    metadata:
+      labels:
+        app: flask-app
+
+    spec:
+      containers:
+        - name: flask-app
+          image: python:3.12-slim
+
+          ports:
+            - containerPort: 5000
+              protocol: TCP
+
+          command:
+            - python
+
+          args:
+            - -c
+            - |
+              from flask import Flask
+              app = Flask(__name__)
+
+              @app.route("/")
+              def hello():
+                  return "Hello from Flask Kubernetes!"
+
+              @app.route("/health")
+              def health():
+                  return "OK"
+
+              app.run(host="0.0.0.0", port=5000)
+
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+
+            limits:
+              cpu: 500m
+              memory: 256Mi
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+
+          volumeMounts:
+            - name: flask-storage
+              mountPath: /app/data
+
+      volumes:
+      - name: flask-storage
+        persistentVolumeClaim:
+           claimName: flask-app-storage
