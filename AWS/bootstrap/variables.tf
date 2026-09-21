@@ -3,7 +3,7 @@ variable "vpc_id" {
   type        = string
 }
 variable "bucket_name" {
-  default = "infra-tfstate"
+  default = "ernestf3700-infra-tfstate"
 }
 
 variable "lock_table_name" {
